@@ -1,0 +1,17 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', 'Segoe UI', 'Roboto', sans-serif;
+  color: #1e293b; /* dark blue-gray for better readability */
+  background-color: #f8fafc;
+}
+
+h1, h2, h3, h4, h5, h6, p, span, label, button, input, select {
+  color: #0f172a; /* stronger primary text color */
+}

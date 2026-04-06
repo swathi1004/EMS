@@ -1,0 +1,17 @@
+# Database files
+backend/data/*.db
+backend/data/*.trace.db
+
+# Build outputs
+backend/target/
+frontend/dist/
+node_modules/
+
+# IDE files
+.vscode/
+.idea/
+*.iml
+
+# OS files
+.DS_Store
+Thumbs.db
