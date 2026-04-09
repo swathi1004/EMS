@@ -57,7 +57,31 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public Employee create(Employee employee) {
+        if (employee.getStatus() == null || employee.getStatus().isEmpty()) {
+            employee.setStatus("Active");
+        }
         return repository.save(employee);
+    }
+
+    @Override
+    public Employee register(Employee employee) {
+        if (employee.getEmail() != null && repository.existsByEmail(employee.getEmail())) {
+            throw new IllegalArgumentException("An account with that email already exists.");
+        }
+        employee.setStatus("Pending");
+        return repository.save(employee);
+    }
+
+    @Override
+    public Employee authenticate(String email, String password) {
+        Employee employee = repository.findByEmailAndPassword(email, password);
+        if (employee == null) {
+            throw new ResourceNotFoundException("Invalid email or password");
+        }
+        if ("Pending".equalsIgnoreCase(employee.getStatus())) {
+            throw new IllegalStateException("Your account is still pending approval");
+        }
+        return employee;
     }
 
     @Override
@@ -66,9 +90,13 @@ public class EmployeeServiceImpl implements EmployeeService {
         existing.setFirstName(employee.getFirstName());
         existing.setLastName(employee.getLastName());
         existing.setEmail(employee.getEmail());
+        if (employee.getPassword() != null && !employee.getPassword().isEmpty()) {
+            existing.setPassword(employee.getPassword());
+        }
         existing.setDepartment(employee.getDepartment());
         existing.setSalary(employee.getSalary());
         existing.setPhone(employee.getPhone());
+        existing.setStatus(employee.getStatus());
         return repository.save(existing);
     }
 
