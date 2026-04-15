@@ -30,6 +30,13 @@ public class Employee {
     @Column(nullable = false, unique = true)
     private String email;
 
+    @Column(unique = true)
+    private String username;
+
+    private String password;
+
+    private String status;
+
     @NotBlank(message = "Department is required")
     @Column(nullable = false)
     private String department;

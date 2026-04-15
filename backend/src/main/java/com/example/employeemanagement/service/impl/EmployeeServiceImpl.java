@@ -8,6 +8,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -57,6 +58,12 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public Employee create(Employee employee) {
+        if (employee.getUsername() != null && repository.existsByUsername(employee.getUsername())) {
+            throw new IllegalArgumentException("An account with that username already exists.");
+        }
+        if (employee.getEmail() != null && repository.existsByEmail(employee.getEmail())) {
+            throw new IllegalArgumentException("An account with that email already exists.");
+        }
         if (employee.getStatus() == null || employee.getStatus().isEmpty()) {
             employee.setStatus("Active");
         }
@@ -65,6 +72,9 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public Employee register(Employee employee) {
+        if (employee.getUsername() != null && repository.existsByUsername(employee.getUsername())) {
+            throw new IllegalArgumentException("An account with that username already exists.");
+        }
         if (employee.getEmail() != null && repository.existsByEmail(employee.getEmail())) {
             throw new IllegalArgumentException("An account with that email already exists.");
         }
@@ -74,14 +84,14 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public Employee authenticate(String email, String password) {
-        Employee employee = repository.findByEmailAndPassword(email, password);
-        if (employee == null) {
+        Optional<Employee> employee = repository.findByEmailAndPassword(email, password);
+        if (employee.isEmpty()) {
             throw new ResourceNotFoundException("Invalid email or password");
         }
-        if ("Pending".equalsIgnoreCase(employee.getStatus())) {
+        if ("Pending".equalsIgnoreCase(employee.get().getStatus())) {
             throw new IllegalStateException("Your account is still pending approval");
         }
-        return employee;
+        return employee.get();
     }
 
     @Override
@@ -90,13 +100,18 @@ public class EmployeeServiceImpl implements EmployeeService {
         existing.setFirstName(employee.getFirstName());
         existing.setLastName(employee.getLastName());
         existing.setEmail(employee.getEmail());
+        if (employee.getUsername() != null && !employee.getUsername().isEmpty()) {
+            existing.setUsername(employee.getUsername());
+        }
         if (employee.getPassword() != null && !employee.getPassword().isEmpty()) {
             existing.setPassword(employee.getPassword());
         }
         existing.setDepartment(employee.getDepartment());
         existing.setSalary(employee.getSalary());
         existing.setPhone(employee.getPhone());
-        existing.setStatus(employee.getStatus());
+        if (employee.getStatus() != null && !employee.getStatus().isEmpty()) {
+            existing.setStatus(employee.getStatus());
+        }
         return repository.save(existing);
     }
 

@@ -11,4 +11,6 @@ public interface EmployeeService {
     Employee update(Long id, Employee employee);
     void delete(Long id);
     long countAll();
+    Employee register(Employee employee);
+    Employee authenticate(String email, String password);
 }
