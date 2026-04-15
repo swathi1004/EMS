@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { FaSearch, FaPlus, FaEdit, FaTrash, FaSortUp, FaSortDown, FaSort } from 'react-icons/fa';
 
 /* ── Seed data (used when backend is not running) ── */
-const API_URL = 'http://localhost:8080/api/employees';
+const API_URL = 'https://ems-vlsu.onrender.com/api/employees';
 
 const getUsers = () => {
   try { return JSON.parse(localStorage.getItem('ems-users') || '[]'); } catch { return []; }
